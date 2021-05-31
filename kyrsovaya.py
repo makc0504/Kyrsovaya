@@ -11,31 +11,31 @@ import hashlib
 def canonize(txt):
     stop_symbols = "@^&*$#№%«»©.,!?:;-\n\r()"
 
-    stop_words = ('это', 'как', 'так','и', 'в', 'над',
+    stop_words = ('это', 'как', 'так', 'и', 'в', 'над',
                   'к', 'до', 'не', 'на', 'но', 'за',
                   'то', 'с', 'ли', 'а', 'во', 'от',
                   'со', 'для', 'о', 'же', 'ну', 'вы',
-                  'бы', 'что', 'кто', 'он', 'она', 'у', 
-		  'под', 'по','<doctype>', '<!-->', '<a>',
-		  '<abbr>', '<acronym>', '<base>', '<basefont>',
-		  '<big>', '<blockquote>', '<body>', '<br>',
-		  '<caption>', '<code>', '<col>', '<colgroup>',
-		  '<dd>', '<div>', '<em>', '<font>', '<form>',
-		  '<h>', '<head>', '<hr>', '<html>', '<img>'
-		  '<input>', '<kbd>', '<li>', '<link>', '<meta>'
-		  '<marquee>', '<nobr>', '<ol>', '<option>', '<p>'
-		  '<pre>', '<q>', '<samp>', '<select>', '<small>'
-		  '<span>', '<strike>', '<strong>', '<style>', '<sub>'
-		  '<sup>', '<table>', '<tbody>', '<td>', '<textarea>'
-		  '<tfoot>', '<th>', '<thead>', '<title>', '<tr>',
-		  '<ul>', '<wbr>', '<u>')
+                  'бы', 'что', 'кто', 'он', 'она', 'у',
+                  'под', 'по', '<doctype>', '<!-->', '<a>',
+                  '<abbr>', '<acronym>', '<base>', '<basefont>',
+                  '<big>', '<blockquote>', '<body>', '<br>',
+                  '<caption>', '<code>', '<col>', '<colgroup>',
+                  '<dd>', '<div>', '<em>', '<font>', '<form>',
+                  '<h>', '<head>', '<hr>', '<html>', '<img>',
+                  '<input>', '<kbd>', '<li>', '<link>', '<meta>',
+                  '<marquee>', '<nobr>', '<ol>', '<option>', '<p>',
+                  '<pre>', '<q>', '<samp>', '<select>', '<small>',
+                  '<span>', '<strike>', '<strong>', '<style>', '<sub>',
+                  '<sup>', '<table>', '<tbody>', '<td>', '<textarea>',
+                  '<tfoot>', '<th>', '<thead>', '<title>', '<tr>',
+                  '<ul>', '<wbr>', '<u>')
 
     result = ''
     for x in [y.rstrip('.').strip(stop_symbols) for y in txt.lower().split()]:
         if x and (x not in stop_words):
             result += x + ' '
 
-    return result
+    return result[:len(result) - 1]
 
 
 # Вывод канонизированного текста №1
@@ -70,14 +70,14 @@ def step(txt):
             count += 1
         for i in range(int(count)):
             result.append('')
-            for j in range(k, k+le_n):
+            for j in range(k, k + le_n):
                 if j >= len(symbols):
                     break
                 result[i] += symbols[j]
             k += le_n
     if var.get() == 2:
         words = txt.split()
-        count = len(words) - le_n - 1
+        count = len(words)
         if len(words) % le_n != 0:
             count += 1
         for i in range(int(count)):
@@ -125,10 +125,10 @@ def print_shingle_2():
 # Рассчёт процента совпадения текстов
 def compaire(txt_1, txt_2):
     same = 0
-    for i in range(int(len(txt_1))):
-        if txt_1[i] == txt_2[i]:
+    for i in range(len(txt_1)):
+        if txt_1[i] in txt_2:
             same += 1
-    percent = same*2/float(len(txt_1) + len(txt_2))*100
+    percent = same*2 / float(len(txt_1) + len(txt_2)) * 100
     return percent
 
 
@@ -136,8 +136,8 @@ def compaire(txt_1, txt_2):
 def payment():
     txt_1 = txt_entry1.get("1.0", END)
     txt_2 = txt_entry2.get("1.0", END)
-    txt_encode_1 = hashlib.md5(txt_1.encode())
-    txt_encode_2 = hashlib.md5(txt_2.encode())
+    txt_encode_1 = hashlib.md5(txt_1.encode("UTF-8"))
+    txt_encode_2 = hashlib.md5(txt_2.encode("UTF-8"))
     cmp1 = txt_encode_1.hexdigest()
     cmp2 = txt_encode_2.hexdigest()
     answer = compaire(cmp1, cmp2)
@@ -207,7 +207,6 @@ window.geometry('1500x720')
 window.wm_attributes('-alpha', 10)
 window.resizable(width=False, height=False)
 fr = Frame(window, width=500, height=100, bg='black')
-
 
 # Канонизация
 btn_clean1 = tk.Button(text='Канонизация', width=15, command=print_canonize_1)
@@ -281,6 +280,5 @@ label = Label(window, text='ПАРАМЕТРЫ:', font=('Times new roman', 12), 
 label.place(x=35, y=15)
 btn_ans = tk.Button(text='РАССЧИТАТЬ', width=18, height=3, bg='green2', command=payment)
 btn_ans.place(x=15, y=500)
-
 
 window.mainloop()
